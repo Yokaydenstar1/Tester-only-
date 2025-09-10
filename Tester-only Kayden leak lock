@@ -1,0 +1,294 @@
+--// KaydenLockV3.4 Combined Script
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+--// =========================
+--// LOADING SCREEN + TIKTOK
+--// =========================
+-- Pulse function for strokes
+local function pulse(stroke: UIStroke, duration)
+	while stroke.Parent do
+		local tweenIn = TweenService:Create(stroke, TweenInfo.new(duration/2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Transparency = 0.1})
+		tweenIn:Play()
+		tweenIn.Completed:Wait()
+
+		local tweenOut = TweenService:Create(stroke, TweenInfo.new(duration/2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Transparency = 0.5})
+		tweenOut:Play()
+		tweenOut.Completed:Wait()
+	end
+end
+
+-- Scale pulse function (heartbeat)
+local function scalePulse(uiScale, duration)
+	while uiScale.Parent do
+		local tweenIn = TweenService:Create(uiScale, TweenInfo.new(duration/2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Scale = 1.1})
+		tweenIn:Play()
+		tweenIn.Completed:Wait()
+
+		local tweenOut = TweenService:Create(uiScale, TweenInfo.new(duration/2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Scale = 1})
+		tweenOut:Play()
+		tweenOut.Completed:Wait()
+	end
+end
+
+-- ScreenGui Setup
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "KaydenLockV3_4"
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+local bg = Instance.new("Frame")
+bg.Size = UDim2.new(1,0,1,0)
+bg.BackgroundColor3 = Color3.new(0,0,0)
+bg.Parent = screenGui
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Text = "KaydenLockV3.4 Loading!"
+title.Size = UDim2.new(1,0,0,100)
+title.Position = UDim2.new(0,0,0.2,0)
+title.TextColor3 = Color3.fromRGB(255,0,0)
+title.Font = Enum.Font.Arcade
+title.TextScaled = true
+title.BackgroundTransparency = 1
+title.Parent = bg
+
+local titleStroke = Instance.new("UIStroke")
+titleStroke.Thickness = 2
+titleStroke.Color = Color3.fromRGB(255,0,0)
+titleStroke.Parent = title
+
+-- Loading bar
+local loadingBarBG = Instance.new("Frame")
+loadingBarBG.Size = UDim2.new(0.6,0,0.05,0)
+loadingBarBG.Position = UDim2.new(0.2,0,0.5,0)
+loadingBarBG.BackgroundColor3 = Color3.fromRGB(30,30,30)
+loadingBarBG.Parent = bg
+
+local bgStroke = Instance.new("UIStroke")
+bgStroke.Thickness = 2
+bgStroke.Color = Color3.fromRGB(255,0,0)
+bgStroke.Parent = loadingBarBG
+
+local loadingBar = Instance.new("Frame")
+loadingBar.Size = UDim2.new(0,0,1,0)
+loadingBar.BackgroundColor3 = Color3.fromRGB(255,0,0)
+loadingBar.Parent = loadingBarBG
+
+local barStroke = Instance.new("UIStroke")
+barStroke.Thickness = 2
+barStroke.Color = Color3.fromRGB(255,0,0)
+barStroke.Parent = loadingBar
+
+-- TikTok message
+local tiktokMsg = Instance.new("TextLabel")
+tiktokMsg.Text = "TikTok is Kayden.10m for updates abt lock!🔒"
+tiktokMsg.Size = UDim2.new(1,0,0,80)
+tiktokMsg.Position = UDim2.new(0,0,0.45,0)
+tiktokMsg.TextColor3 = Color3.fromRGB(255,0,0)
+tiktokMsg.Font = Enum.Font.Arcade
+tiktokMsg.TextScaled = true
+tiktokMsg.BackgroundTransparency = 1
+tiktokMsg.TextTransparency = 1
+tiktokMsg.Parent = screenGui
+
+local tiktokStroke = Instance.new("UIStroke")
+tiktokStroke.Thickness = 2
+tiktokStroke.Color = Color3.fromRGB(255,0,0)
+tiktokStroke.Transparency = 0.5
+tiktokStroke.Parent = tiktokMsg
+
+local tiktokScale = Instance.new("UIScale")
+tiktokScale.Scale = 1
+tiktokScale.Parent = tiktokMsg
+
+-- Loading animation
+local function playLoading()
+	for i = 1,4 do
+		local tween = TweenService:Create(loadingBar, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(i/4,0,1,0)})
+		tween:Play()
+		tween.Completed:Wait()
+	end
+
+	local fadeTween = TweenService:Create(bg, TweenInfo.new(2, Enum.EasingStyle.Sine), {BackgroundTransparency = 1})
+	fadeTween:Play()
+	fadeTween.Completed:Wait()
+	bg:Destroy()
+end
+
+-- TikTok animation
+local function playTikTok(callback)
+	task.wait(2)
+
+	local fadeIn = TweenService:Create(tiktokMsg, TweenInfo.new(2, Enum.EasingStyle.Sine), {TextTransparency = 0})
+	fadeIn:Play()
+	fadeIn.Completed:Wait()
+
+	task.spawn(function() pulse(tiktokStroke, 4) end)
+	task.spawn(function() scalePulse(tiktokScale, 2) end)
+
+	task.wait(5)
+
+	local fadeOut = TweenService:Create(tiktokMsg, TweenInfo.new(2, Enum.EasingStyle.Sine), {TextTransparency = 1})
+	fadeOut:Play()
+	fadeOut.Completed:Wait()
+
+	screenGui:Destroy()
+
+	if callback then callback() end
+end
+
+-- Sparkles
+local function sparkle()
+	while bg.Parent do
+		local dot = Instance.new("Frame")
+		dot.Size = UDim2.new(0, math.random(2,5), 0, math.random(2,5))
+		dot.Position = UDim2.new(math.random(),0,math.random(),0)
+		dot.BackgroundColor3 = Color3.fromRGB(255,0,0)
+		dot.Parent = bg
+
+		local tw = TweenService:Create(dot, TweenInfo.new(1, Enum.EasingStyle.Sine), {BackgroundTransparency = 1})
+		tw:Play()
+		tw.Completed:Wait()
+		dot:Destroy()
+		task.wait(0.2)
+	end
+end
+task.spawn(sparkle)
+
+task.delay(1.2, function()
+	task.spawn(function() pulse(titleStroke, 7) end)
+	task.spawn(function() pulse(barStroke, 4) end)
+	task.spawn(function() pulse(bgStroke, 7) end)
+end)
+
+--// =========================
+--// MAIN UI CREATION
+--// =========================
+local function CreateUI()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "KaydenLockGui"
+    ScreenGui.Parent = game.CoreGui
+    ScreenGui.ResetOnSpawn = false
+
+    local MainContainer = Instance.new("Frame")
+    MainContainer.Name = "MainContainer"
+    MainContainer.Size = UDim2.new(0, 140, 0, 60)
+    MainContainer.Position = UDim2.new(0, 10, 0, 10)
+    MainContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    MainContainer.BorderColor3 = Color3.fromRGB(60, 60, 60)
+    MainContainer.BorderSizePixel = 2
+    MainContainer.Parent = ScreenGui
+
+    local LockButton = Instance.new("TextButton")
+    LockButton.Size = UDim2.new(1, -10, 1, -10)
+    LockButton.Position = UDim2.new(0, 5, 0, 5)
+    LockButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    LockButton.BorderColor3 = Color3.fromRGB(60, 60, 60)
+    LockButton.BorderSizePixel = 2
+    LockButton.Text = "Kayden Lock"
+    LockButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    LockButton.Font = Enum.Font.GothamBold
+    LockButton.TextSize = 16
+    LockButton.Parent = MainContainer
+
+    local LockSymbol = Instance.new("ImageLabel")
+    LockSymbol.Size = UDim2.new(0, 40, 0, 40)
+    LockSymbol.AnchorPoint = Vector2.new(0.5, 0.5)
+    LockSymbol.BackgroundTransparency = 1
+    LockSymbol.Image = "rbxassetid://11305923967"
+    LockSymbol.Visible = false
+    LockSymbol.Parent = ScreenGui
+
+    local LockedOnTarget = nil
+    local LockEnabled = false
+    local TargetConnection = nil
+
+    local function FindPlayerInSight()
+        local closestPlayer, closestDistance = nil, math.huge
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character then
+                local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+                local hum = player.Character:FindFirstChild("Humanoid")
+                if hrp and hum and hum.Health > 0 then
+                    local screenPoint, onScreen = Camera:WorldToViewportPoint(hrp.Position)
+                    if onScreen then
+                        local center = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+                        local playerPos = Vector2.new(screenPoint.X, screenPoint.Y)
+                        local dist = (center - playerPos).Magnitude
+                        if dist < 500 and dist < closestDistance then
+                            closestDistance, closestPlayer = dist, player
+                        end
+                    end
+                end
+            end
+        end
+        return closestPlayer
+    end
+
+    local function LockOnToPlayer()
+        if LockEnabled then
+            local targetPlayer = FindPlayerInSight()
+            if targetPlayer then
+                LockedOnTarget = targetPlayer
+                LockButton.Text = "Locked: " .. targetPlayer.Name
+                LockButton.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
+                LockSymbol.Visible = true
+
+                if TargetConnection then TargetConnection:Disconnect() end
+                TargetConnection = RunService.RenderStepped:Connect(function()
+                    if LockedOnTarget and LockedOnTarget.Character then
+                        local hrp = LockedOnTarget.Character:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            local pos, onScreen = Camera:WorldToViewportPoint(hrp.Position)
+                            if onScreen then
+                                LockSymbol.Position = UDim2.new(0, pos.X, 0, pos.Y - 50)
+                                Camera.CFrame = CFrame.new(Camera.CFrame.Position, hrp.Position)
+                            else
+                                LockSymbol.Visible = false
+                            end
+                        end
+                    end
+                end)
+            else
+                LockButton.Text = "No Target Found"
+                task.wait(1)
+                LockButton.Text = "Kayden Lock"
+                LockButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                LockSymbol.Visible = false
+            end
+        end
+    end
+
+    local function ToggleLock()
+        LockEnabled = not LockEnabled
+        if LockEnabled then
+            LockButton.Text = "Locking..."
+            LockOnToPlayer()
+        else
+            LockButton.Text = "Kayden Lock"
+            LockButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+            LockedOnTarget = nil
+            LockSymbol.Visible = false
+            if TargetConnection then TargetConnection:Disconnect() TargetConnection = nil end
+        end
+    end
+
+    LockButton.MouseButton1Click:Connect(ToggleLock)
+    UserInputService.InputBegan:Connect(function(input, processed)
+        if not processed and input.KeyCode == Enum.KeyCode.Q then
+            ToggleLock()
+        end
+    end)
+
+    print("Kayden Lock UI loaded - Press the button or Q key to lock onto the closest player")
+end
+
+-- Run loading → TikTok → UI
+task.spawn(function()
+    playLoading()
+    playTikTok(CreateUI)
+end)
